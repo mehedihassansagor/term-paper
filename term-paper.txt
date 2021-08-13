@@ -1,0 +1,176 @@
+ .MODEL SMALL
+ .STACK 100H
+
+ .DATA
+    PROMPT_1  DB  'Enter the 1st number : $'
+    PROMPT_2  DB  0DH, 0AH, 'Enter the 2nd number : $'
+    DIF       DB  0DH, 0AH, 'Subtriction of 1st and 2nd number : $'
+    SUM       DB  0DH, 0AH, 'Adition  of Fi1st and 2nd number : $'
+    EVOD      DB  0DH, 0AH, 'The number is: $' 
+    EVEN      DB  'even', '$'
+    ODD       DB  'odd', '$'
+    COMG      DB  0DH, 0AH, '1st number is greater than 2nd number', '$'
+    COML      DB  0DH, 0AH, '1st number is less than 2nd number', '$'
+    COME      DB  0DH, 0AH, '1st number is equal to 2nd number', '$'
+        
+    N1        DB ?
+    N2        DB ?
+    SUBR      DB ?
+    SUMR      DB ?  
+
+ .CODE  
+ 
+   MAIN PROC
+     mov AX, @DATA   
+     mov DS, AX
+
+     LEA DX, PROMPT_1   
+     mov AH, 9
+     INT 21H
+
+     MOV AH, 1   
+     INT 21H
+
+     mov BL, AL    
+     SUB BL, 30H
+     
+     mov N1, BL
+     
+    
+     LEA DX, EVOD    
+     mov AH, 9
+     INT 21H
+     
+     TEST N1, 01H
+    
+     JNE @ODD  
+    
+     mov AH, 2
+     LEA DX, even   
+     MOV AH, 9
+     INT 21H   
+     
+     JMP @NEXT                 
+        
+     @ODD:
+      mov AH, 2
+      LEA DX, odd   ; print 'ODD' 
+      MOV AH, 9
+      INT 21H   
+      
+      
+      @NEXT:
+
+      LEA DX, PROMPT_2    
+      mov AH, 9
+      INT 21H
+
+      mov AH, 1    
+      INT 21H
+
+      mov BH, AL   
+      SUB BH, 30H
+      mov N2, BH
+
+ 
+     LEA DX, EVOD   
+     mov AH, 9
+     INT 21H
+     
+     TEST N2, 01H 
+    
+     JNE @ODD2   
+    
+     mov AH, 2
+     LEA DX, even  ; print 'even'   
+     mov AH, 9
+     INT 21H  
+     
+     JMP @NEXT2                  
+    
+     @ODD2:
+      mov AH, 2
+      LEA DX, odd   ; print 'odd' 
+      mov AH, 9
+      INT 21H   
+             
+     @NEXT2:
+
+
+     LEA DX, DIF    
+     mov AH, 9
+     INT 21H
+      
+     SUB BL, BH     
+     mov SUBR, BL
+     
+     ADD SUBR, 30H  
+    
+     mov AH, 2       
+     mov DL, SUBR     
+     INT 21H 
+     
+     
+     LEA DX, SUM  
+     mov AH, 9
+     INT 21H   
+     
+     mov BL, N1
+     ADD BL, N2
+     
+     mov SUM, BL
+
+     ADD SUM, 30H   
+
+     mov AH, 2  
+     MOV DL, SUM     
+     INT 21H 
+     
+    
+    mov BL, N1
+    mov BH, N2
+     
+    CMP BL, BH
+    JG LV1
+    JMP LV2
+    
+    
+    
+    LV1:
+    mov AH,9
+    LEA DX,COMG
+    INT 21H
+    JMP @EXITF
+    
+    
+    LV2:
+    CMP BH,BL
+    JG LV3
+    JMP LV4
+    
+    
+    
+    LV3:
+    mov AH,9
+    LEA DX,COML
+    INT 21H
+    JMP @EXITF
+    
+    
+    LV4:
+    mov AH,9
+    LEA DX,COME
+    INT 21H
+    JMP @EXITF
+
+     
+     @EXITF:
+
+
+     
+
+     mov AH, 4CH      ;RETURN CONTROL TO DOS
+     INT 21H
+     
+   MAIN ENDP
+ END MAIN
